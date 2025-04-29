@@ -1225,7 +1225,7 @@ nametag(const Arg *arg) {
 
 	for(i = 0; i < LENGTH(tags); i++)
 		if(selmon->tagset[selmon->seltags] & (1 << i))
-			strcpy(tags[i], name);
+			strcpy(tags[i]+2, name);
 	drawbars();
 }
 

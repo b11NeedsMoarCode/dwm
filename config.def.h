@@ -20,7 +20,7 @@ static const char *colors[][3]      = {
 
 /* tagging */
 #define MAX_TAGLEN 50
-static char tags[][MAX_TAGLEN] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static char tags[][MAX_TAGLEN] = { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
 
 static const Rule rules[] = {
 	/* xprop(1):
