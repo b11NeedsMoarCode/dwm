@@ -20,7 +20,8 @@ static const char *colors[][3]      = {
 
 /* tagging */
 #define MAX_TAGLEN 50
-static char tags[][MAX_TAGLEN] = { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
+static char tags[][MAX_TAGLEN] =       { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
+static char backuptags[][MAX_TAGLEN] = { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -89,6 +90,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_semicolon, tagmon,      {.i = +1 } },
 	{ MODKEY,                       XK_n,      nametag,        {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_n,      resetnametags,  {0} },
 	TAGKEYS(                        XK_ampersand,              0)
 	TAGKEYS(                        XK_eacute,                 1)
 	TAGKEYS(                        XK_quotedbl,               2)

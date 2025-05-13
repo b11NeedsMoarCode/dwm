@@ -185,6 +185,7 @@ static void monocle(Monitor *m);
 static void motionnotify(XEvent *e);
 static void movemouse(const Arg *arg);
 static void nametag(const Arg *arg);
+static void resetnametags(const Arg *arg);
 static Client *nexttiled(Client *c);
 static void pop(Client *c);
 static void propertynotify(XEvent *e);
@@ -1226,6 +1227,14 @@ nametag(const Arg *arg) {
 	for(i = 0; i < LENGTH(tags); i++)
 		if(selmon->tagset[selmon->seltags] & (1 << i))
 			strcpy(tags[i]+2, name);
+	drawbars();
+}
+
+void
+resetnametags(const Arg *arg) {
+	int i;
+	for(i = 0; i < LENGTH(tags); i++)
+			strcpy(tags[i], backuptags[i]);
 	drawbars();
 }
 
