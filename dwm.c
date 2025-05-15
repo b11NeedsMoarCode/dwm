@@ -50,6 +50,7 @@
 #define INTERSECT(x,y,w,h,m)    (MAX(0, MIN((x)+(w),(m)->wx+(m)->ww) - MAX((x),(m)->wx)) \
                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
 #define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]))
+#define ISINRENAMEDTAGS(C)      ((C->tags & tagsrenamed ))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
@@ -178,6 +179,7 @@ static void grabkeys(void);
 static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
+static void killallclientsinnonrenamedtags(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
@@ -1031,6 +1033,27 @@ killclient(const Arg *arg)
 }
 
 void
+killallclientsinnonrenamedtags(const Arg *arg)
+{
+	Client *c;
+	if (!selmon->sel)
+	    return;
+
+	for (c = selmon->clients; c; c = c->next) {
+		if (!ISINRENAMEDTAGS(c) && !sendevent(c, wmatom[WMDelete])) {
+			XGrabServer(dpy);
+			XSetErrorHandler(xerrordummy);
+			XSetCloseDownMode(dpy, DestroyAll);
+			XKillClient(dpy, selmon->sel->win);
+			XKillClient(dpy, c->win);
+			XSync(dpy, False);
+			XSetErrorHandler(xerror);
+			XUngrabServer(dpy);
+		}
+	}
+}
+
+void
 manage(Window w, XWindowAttributes *wa)
 {
 	Client *c, *t = NULL;
@@ -1225,15 +1248,23 @@ nametag(const Arg *arg) {
 		*p = '\0';
 
 	for(i = 0; i < LENGTH(tags); i++)
-		if(selmon->tagset[selmon->seltags] & (1 << i))
+		if(selmon->tagset[selmon->seltags] & (1 << i)){
 			strcpy(tags[i]+2, name);
+			// Step 1 : set the n-th tag bit to 0
+			tagsrenamed &= ~( 1<<i);
+
+			//step 2 : set the n-th tag bit to 1 IFF the len is greater than 0
+			if(name[0] != 0){
+				tagsrenamed |=  (1<<i);
+			}
+		}
 	drawbars();
 }
 
 void
 resetnametags(const Arg *arg) {
-	int i;
-	for(i = 0; i < LENGTH(tags); i++)
+	tagsrenamed = 0;
+	for(int i = 0; i < LENGTH(tags); i++)
 			strcpy(tags[i], backuptags[i]);
 	drawbars();
 }

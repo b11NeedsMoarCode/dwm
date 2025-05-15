@@ -22,6 +22,7 @@ static const char *colors[][3]      = {
 #define MAX_TAGLEN 50
 static char tags[][MAX_TAGLEN] =       { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
 static char backuptags[][MAX_TAGLEN] = { "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " };
+static int tagsrenamed = 0; //A bitmask of all the tags that have been renamed
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -78,6 +79,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_c,      killallclientsinnonrenamedtags, {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
